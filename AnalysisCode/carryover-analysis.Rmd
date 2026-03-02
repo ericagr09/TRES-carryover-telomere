@@ -1,0 +1,85 @@
+---
+title: "carryover-analysis"
+author: "Erica Griffin"
+date: "2026-02-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+pacman::p_load( dplyr, lme4, MASS, lmerTest, here, ggplot2, DHARMa)
+
+carryover_df <- read.csv(here("IntermediateData", "3-2-26_carryover_df.csv"))
+```
+
+
+```{r}
+model1 <- lmer(Mean_TRF ~ Individual_Treatment + (1 | Nest), data = carryover_df)
+summary(model1)
+res <- simulateResiduals(model1)
+plot(res)
+```
+
+```{r}
+ggplot(carryover_df, aes(x = Individual_Treatment, y = Mean_TRF)) +
+  geom_jitter(width = 0.15, alpha = 0.6, size = 2) +
+  stat_summary(fun = mean, geom = "point", size = 4, color = "pink") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.2, color = "pink") +
+  theme_minimal() +
+  labs(
+    x = "Treatment",
+    y = "Mean TRF"  )
+```
+
+```{r}
+model2 <- lmer(Mean_TRF ~ Individual_Treatment + Mass + (1 | Nest), data = carryover_df)
+summary(model2)
+res <- simulateResiduals(model2)
+plot(res)
+```
+
+```{r}
+model3 <- lmer(Mean_TRF ~ Individual_Treatment + Mass + Individual_Treatment*Mass + (1 | Nest), data = carryover_df)
+summary(model3)
+res <- simulateResiduals(model3)
+plot(res)
+```
+
+# now for some temp
+
+
+```{r}
+ggplot(carryover_df, aes(x = incubation_max_temp, y = Mean_TRF)) +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.6, size = 2, color = "blue") +
+  geom_smooth(method = "lm", color = "pink", se = TRUE) +
+  theme_minimal() +
+  labs(
+    x = "Incubation Max Temp",
+    y = "Mean TRF"
+  )
+
+ggplot(carryover_df, aes(x = incubation_below_18.5, y = Mean_TRF)) +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.6, size = 2, color = "blue") +
+  geom_smooth(method = "lm", color = "pink", se = TRUE) +
+  theme_minimal() +
+  labs(
+    x = "Incubation Days Below 18.5",
+    y = "Mean TRF"
+  )
+
+ggplot(carryover_df, aes(x = incubation_avg_temp, y = Mean_TRF)) +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.6, size = 2, color = "blue") +
+  geom_smooth(method = "lm", color = "pink", se = TRUE) +
+  theme_minimal() +
+  labs(
+    x = "Incubation Average Temp",
+    y = "Mean TRF"
+  )
+```
+```{r}
+model3 <- lmer(Mean_TRF ~ Individual_Treatment + incubation_max_temp + Individual_Treatment*incubation_max_temp + (1 | Nest), data = carryover_df)
+summary(model3)
+res <- simulateResiduals(model3)
+plot(res)
+```
