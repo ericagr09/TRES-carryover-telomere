@@ -28,14 +28,6 @@ ggplot(adult_df, aes(x = Individual_Treatment, y = TRF)) +
     y = "Mean TRF"  )
 
 
-ggplot(adult_df2, aes(x = Individual_Treatment, y = TRF)) +  
-  geom_jitter(width = 0.15, alpha = 0.6, size = 2) +
-  stat_summary(fun = mean, geom = "point", size = 4, color = "pink") +
-  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.2, color = "pink") +
-  theme_minimal() +
-  labs(
-    x = "Treatment",
-    y = "Mean TRF"  )
 ```
 
 ```{r}
@@ -46,6 +38,15 @@ model1 <- lm(TRF ~ Individual_Treatment, data = adult_df2)
 summary(model1)
 res <- simulateResiduals(model1)
 plot(res)
+
+ggplot(adult_df2, aes(x = Individual_Treatment, y = TRF)) +  
+  geom_jitter(width = 0.15, alpha = 0.6, size = 2) +
+  stat_summary(fun = mean, geom = "point", size = 4, color = "pink") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.2, color = "pink") +
+  theme_minimal() +
+  labs(
+    x = "Treatment",
+    y = "Mean TRF"  )
 ```
 
 ```{r}
